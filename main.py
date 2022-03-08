@@ -89,7 +89,7 @@ def print_landmarks(mediapipe, img, img_w, img_h):
                 cv2.circle(img, lm_pos, 3, (100, lm_z, lm_z), -1)
             else:
                 continue
-                cv2.circle(img, lm_pos, 3, (255, lm_z, lm_z), -1)
+                # cv2.circle(img, lm_pos, 3, (255, lm_z, lm_z), -1)
         putdetectinfo(mediapipe, h_id, img_w, img_h, img)
 
 def putdetectinfo(mediapipe, h_id, img_w, img_h, img):
@@ -129,7 +129,6 @@ def main():
     unityconnecter.ConnectUnity()
 
     mediapipe = init_mp(1)
-    # unityconnecter.Receive(200)
 
     cap = cv2.VideoCapture(0)   # カメラのID指定
     try:

@@ -15,9 +15,9 @@ class mp_face:
 
         # landmarkの繋がり表示用
         connections = mp.solutions.face_mesh_connections
-        self.landmark_line_ids = list(connections.FACEMESH_RIGHT_IRIS)
-        self.landmark_line_ids += (list(connections.FACEMESH_LEFT_IRIS))
-        self.landmark_line_ids += (list(connections.FACEMESH_LEFT_EYE))
+        self.landmark_line_ids = list(connections.FACEMESH_RIGHT_IRIS) # 右目虹彩
+        self.landmark_line_ids += (list(connections.FACEMESH_LEFT_IRIS)) # 右目虹彩
+        self.landmark_line_ids += (list(connections.FACEMESH_LEFT_EYE)) # 右目周り
         self.putcircle = (
             473, # 左目の中央
             263, # 左目じり
