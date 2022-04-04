@@ -12,6 +12,7 @@ import datetime
 from connectunity import connectunity
 from mp_hand import mp_hand
 from mp_face import mp_face
+from mp_pose import mp_pose
 
 HOST = "127.0.0.1"
 MAINPORT = 50007
@@ -30,6 +31,8 @@ def init_mp(num):
         mediapipe = mp_hand()
     if num == 1:
         mediapipe = mp_face()
+    if num == 2:
+        mediapipe = mp_pose()
     landmark_line_ids = mediapipe.landmark_line_ids
     print(landmark_line_ids)
 
@@ -52,7 +55,8 @@ def GetLandmarks(mediapipe, cap):
         mediapipe.Process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         # 検出した手の数分繰り返し
         if mediapipe.AllDetections():
-            for h_id, hand_landmarks in enumerate(mediapipe.GetLandmarks(0)):
+            for hand_landmarks in (mediapipe.GetLandmarks(0)):
+            #for h_id, hand_landmarks in enumerate(mediapipe.GetLandmarks(0)):
                 Res = make_landmarks_json(hand_landmarks, img_h, img_w)
             print_landmarks(mediapipe, img, img_w, img_h)
 
@@ -66,7 +70,8 @@ def GetLandmarks(mediapipe, cap):
     return Res
 
 def print_landmarks(mediapipe, img, img_w, img_h):
-    for h_id, hand_landmarks in enumerate(mediapipe.GetLandmarks(1)):
+    #for h_id, hand_landmarks in enumerate(mediapipe.GetLandmarks(1)):
+    for hand_landmarks in (mediapipe.GetLandmarks(1)):
     # landmarkの繋がりをlineで表示
         for line_id in landmark_line_ids:
             # 1点目座標取得
@@ -90,7 +95,7 @@ def print_landmarks(mediapipe, img, img_w, img_h):
             else:
                 continue
                 # cv2.circle(img, lm_pos, 3, (255, lm_z, lm_z), -1)
-        putdetectinfo(mediapipe, h_id, img_w, img_h, img)
+        #putdetectinfo(mediapipe, h_id, img_w, img_h, img)
 
 def putdetectinfo(mediapipe, h_id, img_w, img_h, img):
     # 検出情報をテキスト出力
@@ -125,19 +130,21 @@ def make_landmarks_json(hand_landmarks, img_h, img_w):
     return res
 
 def main():
+    print("Connect Unity is ", is_connectunity)
     unityconnecter = connectunity(HOST, MAINPORT, is_connectunity)
     unityconnecter.ConnectUnity()
 
-    mediapipe = init_mp(1)
+    mediapipe = init_mp(2)
 
-    cap = cv2.VideoCapture(0)   # カメラのID指定
+    cap = cv2.VideoCapture(0)
+
     try:
         while True:
             data = GetLandmarks(mediapipe, cap)
             json_data = json.dumps(data)
             #print(json_data)
             unityconnecter.Send(json_data.encode('utf-8'))
-            time.sleep(0.2)
+            time.sleep(0.05)
     except ConnectionAbortedError:
         print("Connection aborte")
     finally:
